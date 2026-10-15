@@ -21,6 +21,8 @@ Constraints:
 
 Explanation (decision tree for nums = [1,2,3]):
 
+    Screenshot: subsets-include-exclude.png (in this folder)
+
     Each level decides ONE element: include it (+n) or skip it.
 
                                []

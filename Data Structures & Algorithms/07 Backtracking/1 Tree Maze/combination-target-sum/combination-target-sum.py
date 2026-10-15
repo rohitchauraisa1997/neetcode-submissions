@@ -36,6 +36,8 @@ Constraints:
 
 Explanation (decision tree for nums = [2,3,6,7], target = 7):
 
+    Screenshot: combination-target-sum.png (in this folder)
+
     At every node there are two choices for nums[i]:
       +n     = include nums[i] and STAY at i  (it can be used again)
       skip n = never use nums[i] again, move to i+1

@@ -1,14 +1,19 @@
-"""Print the .py files in commit order: all NeetCode problems first, then Codility.
+"""Print the .py files in PDF order: all NeetCode problems first, then Codility.
 
-Problems are ordered by the first commit that added any of their files. Inside a
-problem folder, the file holding the full question comes first, then the other
-approaches in commit order. Renamed files, committed or not, are traced back to
-their original commit.
+NeetCode follows the course: sections and lessons in their numbered order (see
+organize.py), each section's cheatsheet.py first. Within a lesson (and for
+Codility), problems are ordered by the first commit that added any of their
+files. Inside a problem folder, the file holding the full question comes first,
+then the other approaches in commit order. Renamed or moved files, committed or
+not, are traced back to their original commit.
 """
 import os
+import runpy
 import subprocess
 
-TOPICS = ["Data Structures & Algorithms", "codilty"]
+NEETCODE = "Data Structures & Algorithms"
+CODILITY = "codilty"
+CHEATSHEET = "cheatsheet.py"
 
 
 def git(*args):
@@ -101,17 +106,41 @@ def has_full_question(path):
     return "another approach" not in head
 
 
-for topic in TOPICS:
+def py_files(d):
+    return [os.path.join(d, f) for f in os.listdir(d) if f.endswith(".py") and f != CHEATSHEET]
+
+
+def subdirs(d):
+    return sorted(os.path.join(d, x) for x in os.listdir(d) if os.path.isdir(os.path.join(d, x)))
+
+
+def print_problems(folders):
+    """Problem folders by first commit; question file first inside each."""
     problems = []
-    for folder in os.listdir(topic):
-        d = os.path.join(topic, folder)
-        if not os.path.isdir(d):
-            continue
-        files = [os.path.join(d, f) for f in os.listdir(d) if f.endswith(".py")]
-        if not files:
-            continue
-        ranked = sorted(files, key=lambda p: (not has_full_question(p), first_commit(p), p))
-        problems.append((min(first_commit(p) for p in files), ranked))
+    for d in folders:
+        files = py_files(d)
+        if files:
+            ranked = sorted(files, key=lambda p: (not has_full_question(p), first_commit(p), p))
+            problems.append((min(first_commit(p) for p in files), ranked))
     for _, files in sorted(problems):
         for p in files:
             print(p)
+
+
+# Lesson order comes from the course map (folder names sort the same way, but
+# this also handles a section with 10+ lessons).
+lesson_dirs = runpy.run_path("organize.py")["LESSON_DIR"].values()
+lesson_rank = {d: i for i, d in enumerate(lesson_dirs)}
+
+# NeetCode: section -> (cheatsheet) -> lesson -> problem. A section without
+# lessons (e.g. 13 Sliding Window) holds problem folders directly.
+for section in subdirs(NEETCODE):
+    if os.path.exists(os.path.join(section, CHEATSHEET)):
+        print(os.path.join(section, CHEATSHEET))
+    direct = [d for d in subdirs(section) if py_files(d)]
+    print_problems(direct)
+    lessons = [d for d in subdirs(section) if d not in direct]
+    for lesson in sorted(lessons, key=lambda d: (lesson_rank.get(d, len(lesson_rank)), d)):
+        print_problems(subdirs(lesson))
+
+print_problems(subdirs(CODILITY))

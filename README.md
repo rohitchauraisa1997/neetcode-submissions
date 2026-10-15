@@ -4,6 +4,31 @@
 
 ---
 
+## How this repo is organized
+
+`Data Structures & Algorithms/` follows the order of NeetCode's
+[Algorithms & Data Structures for Beginners](https://neetcode.io/courses/dsa-for-beginners/0) course:
+
+```
+Data Structures & Algorithms/<NN Section>/<N Lesson>/<problem>/<problem>.py
+                              01 Arrays / 3 Stacks / minimum-stack / ...
+```
+
+- Each solution starts with its problem statement. Extra approaches point back to it.
+- `cheatsheet.py` in a section holds the general concepts for that topic.
+- A `.png` next to a solution (same name) is a diagram for it.
+- Problems outside the course get their own section after it (e.g. `13 Sliding Window`).
+
+After pulling new NeetCode submissions (the sync writes them to
+`Data Structures & Algorithms/<problem>/`):
+
+```bash
+python3 organize.py   # move new problems into their section/lesson
+./make_pdf.sh         # rebuild solutions.pdf in course order
+```
+
+---
+
 ## What is this?
 
 [NeetCode.io](https://neetcode.io) is a coding interview preparation platform featuring curated problems, video solutions, and an in-browser code editor. This repository is automatically populated with your accepted (or all) solutions using the **GitHub Sync** feature.

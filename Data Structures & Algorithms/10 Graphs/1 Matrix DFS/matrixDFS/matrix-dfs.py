@@ -1,3 +1,39 @@
+"""
+Matrix Depth-First Search: Count Paths (NeetCode)
+=================================================
+
+You are given a binary matrix grid of size ROWS x COLS, where 0 is an open cell
+and 1 is a blocked cell.
+
+Return the number of unique paths from the top-left cell (0, 0) to the
+bottom-right cell (ROWS - 1, COLS - 1).
+
+    - You may move up, down, left or right.
+    - A path may only move along 0's (it can't step on a 1).
+    - A path can't visit the same cell more than once.
+
+Example 1:
+    Input:  grid = [[0,0,0,0],
+                    [1,1,0,0],
+                    [0,0,0,1],
+                    [0,1,0,0]]
+    Output: 2
+
+Example 2:
+    Input:  grid = [[0,0],
+                    [0,0]]
+    Output: 2
+    Explanation: right -> down, or down -> right.
+
+Example 3:
+    Input:  grid = [[0,1],
+                    [1,0]]
+    Output: 0
+    Explanation: Every route to the bottom-right is blocked.
+
+Concepts (two kinds of matrix DFS, BFS vs DFS): see the Graphs cheatsheet.
+"""
+
 class Solution:
     def countPaths(self, grid: List[List[int]]) -> int:
         nRows, nCols = len(grid),len(grid[0])

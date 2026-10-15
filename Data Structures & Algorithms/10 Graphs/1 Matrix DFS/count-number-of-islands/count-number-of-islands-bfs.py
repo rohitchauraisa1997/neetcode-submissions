@@ -1,3 +1,8 @@
+"""
+Count Number of Islands (NeetCode) -- another approach (BFS)
+Problem statement: see count-number-of-islands-dfs.py
+"""
+
 class Solution:
     def numIslands(self, grid: List[List[str]]) -> int:
         nRows, nCols = len(grid), len(grid[0])

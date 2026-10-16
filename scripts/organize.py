@@ -1,4 +1,4 @@
-"""Move NeetCode problem folders into the course's category/lesson folders.
+"""Move NeetCode and Codility problem folders into their lesson folders.
 
 NeetCode's GitHub sync always writes to `Data Structures & Algorithms/<problem>/`.
 Run this after every pull: it moves any such folder (or new submission files for a
@@ -9,10 +9,13 @@ problem that is already organized) to
 following NeetCode's "Algorithms and Data Structures for Beginners"
 course. Problems outside the course go into extra sections after it.
 
+Codility solutions are added by hand to `codility/<anything>/`; they move to
+`codility/<NN Section>/<task-name>/`, using the same sections as NeetCode.
+
 Files still named submission-N.py are listed at the end: they need a problem
 statement and a proper name.
 
-Usage: python3 organize.py [--dry-run]
+Usage: python3 scripts/organize.py [--dry-run]
 """
 import os
 import re
@@ -85,6 +88,45 @@ LESSON_DIR = lesson_dirs()
 LOCATION = {pid: LESSON_DIR[section, lesson] for section, lesson, pids in COURSE for pid in pids}
 SECTION_DIR = re.compile(r"^\d\d ")
 
+# Codility: same sections (names and numbers) as the NeetCode tree, chosen by the
+# technique each task uses. Sections the beginners course doesn't have use the
+# NeetCode 150 topic names, numbered after 13 Sliding Window. No lesson level:
+# codility/<NN Section>/<task-name>/. Includes the other Codility lesson tasks so
+# new ones are sorted automatically.
+CODILITY_ROOT = "codility"
+CODILITY = [
+    ("01 Arrays", ["cyclic-rotation", "max-counters",
+                   "brackets", "fish", "nesting", "stone-wall"]),          # incl. stacks
+    ("02 Linked Lists", ["arr-list-len"]),
+    ("04 Sorting", ["distinct", "max-product-of-three", "triangle", "number-of-disc-intersections"]),
+    ("05 Binary Search", ["min-max-division", "nailing-planks"]),
+    ("09 Hashing", ["perm-missing-elem", "frog-river-one", "missing-integer", "perm-check",
+                    "odd-occurrences-in-array", "dominator", "equi-leader"]),
+    ("11 Dynamic Programming", ["number-solitaire", "min-abs-sum", "fib-frog", "ladder",
+                                "max-slice-sum", "max-double-slice-sum"]),
+    ("12 Bit Manipulation", ["binary-gap"]),
+    ("13 Sliding Window", ["count-distinct-slices", "count-bounded-slices", "max-profit"]),
+    ("14 Prefix Sums", ["tape-equilibrium", "passing-cars", "genomic-range-query",
+                        "min-avg-two-slice"]),
+    ("15 Two Pointers", ["abs-distinct", "count-triangles", "min-abs-sum-of-two"]),
+    ("16 Greedy", ["max-nonoverlapping-segments", "tie-ropes"]),
+    ("17 Math & Geometry", ["frog-jmp", "count-div", "count-factors", "min-perimeter-rectangle",
+                            "flags", "peaks", "count-non-divisible", "count-semiprimes",
+                            "chocolates-by-numbers", "common-prime-divisors"]),
+]
+CODILITY_LOCATION = {task: os.path.join(CODILITY_ROOT, lesson)
+                     for lesson, tasks in CODILITY for task in tasks}
+# Folder names used before that don't match the task name.
+CODILITY_ALIASES = {"prem-missing-element": "perm-missing-elem",
+                    "distinct-slices": "count-distinct-slices"}
+
+
+def codility_task(folder):
+    """'8 distinct slices' -> 'count-distinct-slices'."""
+    name = re.sub(r"^\d+\s+", "", folder).strip().lower()
+    name = re.sub(r"[\s_]+", "-", name)
+    return CODILITY_ALIASES.get(name, name)
+
 
 def git(*args):
     subprocess.run(["git", *args], check=True)
@@ -99,17 +141,21 @@ def move(src, dst, dry):
     git("add", "-A", "--", src, dst)
 
 
-def main():
-    dry = "--dry-run" in sys.argv
+def organize(root, location, task_name=lambda name: name, is_lesson=SECTION_DIR.match):
+    """Move every loose problem folder in root into its lesson. Returns unknown names."""
     unknown = []
-    for name in sorted(os.listdir(ROOT)):
-        src = os.path.join(ROOT, name)
-        if not os.path.isdir(src) or SECTION_DIR.match(name):
+    if not os.path.isdir(root):
+        return unknown
+    dry = "--dry-run" in sys.argv
+    for name in sorted(os.listdir(root)):
+        src = os.path.join(root, name)
+        if not os.path.isdir(src) or is_lesson(name):
             continue
-        if name not in LOCATION:
-            unknown.append(name)
+        task = task_name(name)
+        if task not in location:
+            unknown.append(src)
             continue
-        dst = os.path.join(LOCATION[name], name)
+        dst = os.path.join(location[task], task)
         if not os.path.exists(dst):
             move(src, dst, dry)
             continue
@@ -118,11 +164,19 @@ def main():
             move(os.path.join(src, f), os.path.join(dst, f), dry)
         if not dry:
             os.rmdir(src)
+    return unknown
+
+
+def main():
+    unknown = organize(ROOT, LOCATION)
+    codility_lessons = {lesson for lesson, _ in CODILITY}
+    unknown += organize(CODILITY_ROOT, CODILITY_LOCATION, codility_task,
+                        is_lesson=lambda name: name in codility_lessons)
 
     if unknown:
-        print("\nNot in the course map (add them to COURSE in organize.py):")
-        for name in unknown:
-            print("  " + os.path.join(ROOT, name))
+        print("\nNot in the map (add them to COURSE or CODILITY in organize.py):")
+        for path in unknown:
+            print("  " + path)
 
     todo = sorted(os.path.join(d, f) for d, _, files in os.walk(ROOT)
                   for f in files if re.fullmatch(r"submission-\d+\.py", f))
@@ -133,4 +187,5 @@ def main():
 
 
 if __name__ == "__main__":
+    os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))  # repo root
     main()

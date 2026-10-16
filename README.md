@@ -6,6 +6,13 @@
 
 ## How this repo is organized
 
+```
+Data Structures & Algorithms/   NeetCode solutions (the sync writes here)
+codility/                       Codility solutions
+scripts/                        organize.py, make_pdf.sh, pdf_order.py
+pdf/                            solutions.pdf (generated, for printing)
+```
+
 `Data Structures & Algorithms/` follows the order of NeetCode's
 [Algorithms & Data Structures for Beginners](https://neetcode.io/courses/dsa-for-beginners/0) course:
 
@@ -19,12 +26,19 @@ Data Structures & Algorithms/<NN Section>/<N Lesson>/<problem>/<problem>.py
 - A `.png` next to a solution (same name) is a diagram for it.
 - Problems outside the course get their own section after it (e.g. `13 Sliding Window`).
 
+`codility/` uses the same sections as NeetCode (by the technique each task uses), without
+a lesson level: `codility/<NN Section>/<task-name>/<task-name>.py`
+(e.g. `codility/14 Prefix Sums/passing-cars/`). Sections the beginners course doesn't
+cover use NeetCode 150 topics after it: 13 Sliding Window, 14 Prefix Sums, 15 Two Pointers,
+16 Greedy, 17 Math & Geometry. Add a new task as `codility/<task-name>/` and
+`scripts/organize.py` moves it into its section.
+
 After pulling new NeetCode submissions (the sync writes them to
 `Data Structures & Algorithms/<problem>/`):
 
 ```bash
-python3 organize.py   # move new problems into their section/lesson
-./make_pdf.sh         # rebuild solutions.pdf in course order
+python3 scripts/organize.py   # move new problems (NeetCode + Codility) into their lesson
+sh scripts/make_pdf.sh        # rebuild pdf/solutions.pdf in course order
 ```
 
 ---

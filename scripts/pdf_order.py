@@ -11,8 +11,11 @@ import os
 import runpy
 import subprocess
 
+# Paths below are relative to the repo root.
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+
 NEETCODE = "Data Structures & Algorithms"
-CODILITY = "codilty"
+CODILITY = "codility"
 CHEATSHEET = "cheatsheet.py"
 
 
@@ -129,7 +132,7 @@ def print_problems(folders):
 
 # Lesson order comes from the course map (folder names sort the same way, but
 # this also handles a section with 10+ lessons).
-lesson_dirs = runpy.run_path("organize.py")["LESSON_DIR"].values()
+lesson_dirs = runpy.run_path("scripts/organize.py")["LESSON_DIR"].values()
 lesson_rank = {d: i for i, d in enumerate(lesson_dirs)}
 
 # NeetCode: section -> (cheatsheet) -> lesson -> problem. A section without
@@ -143,4 +146,6 @@ for section in subdirs(NEETCODE):
     for lesson in sorted(lessons, key=lambda d: (lesson_rank.get(d, len(lesson_rank)), d)):
         print_problems(subdirs(lesson))
 
-print_problems(subdirs(CODILITY))
+# Codility: lesson folders are numbered as on the site, so they sort by name.
+for lesson in subdirs(CODILITY):
+    print_problems(subdirs(lesson))

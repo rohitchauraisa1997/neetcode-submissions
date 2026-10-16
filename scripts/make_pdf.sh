@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Build solutions.pdf from every .py file, in commit order (NeetCode first,
+# Build pdf/solutions.pdf from every .py file, in commit order (NeetCode first,
 # then Codility; see pdf_order.py). Each file starts on a new page.
 # If a solution has a screenshot next to it (same name, .png), it gets its own
 # page right after that solution.
 # Non-ASCII characters are mapped to ASCII first, since enscript can't render UTF-8.
 set -euo pipefail
-cd "$(dirname "$0")"
+cd "$(dirname "$0")/.."           # repo root, wherever this is run from
 
-OUT="${1:-solutions.pdf}"
+OUT="${1:-pdf/solutions.pdf}"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
@@ -36,7 +36,7 @@ EOF
 
 # Write the order to a file first (not `< <(...)`), so the script also works
 # when run as `sh make_pdf.sh`.
-python3 -I pdf_order.py > "$TMP/order.txt"
+python3 -I scripts/pdf_order.py > "$TMP/order.txt"
 
 parts=()
 n=0
@@ -44,7 +44,8 @@ while IFS= read -r f; do
     n=$((n + 1))
     part="$TMP/$(printf '%03d' "$n")"
 
-    # Header: "06 Trees > 19 Depth-First Search" (or "codilty"), file name as the first line.
+    # Header: "06 Trees > 3 Depth-First Search" or "codility > 05 Prefix Sums",
+    # file name as the first line.
     rel="${f#Data Structures & Algorithms/}"
     if [[ "$(basename "$f")" == cheatsheet.py ]]; then
         label="$(dirname "$rel") > Cheatsheet"

@@ -34,6 +34,10 @@ page.save(out, resolution=dpi)
 EOF
 }
 
+# Write the order to a file first (not `< <(...)`), so the script also works
+# when run as `sh make_pdf.sh`.
+python3 -I pdf_order.py > "$TMP/order.txt"
+
 parts=()
 n=0
 while IFS= read -r f; do
@@ -65,7 +69,7 @@ while IFS= read -r f; do
         image_page "$png" "$part-img.pdf"
         parts+=("$part-img.pdf")
     fi
-done < <(python3 -I pdf_order.py)
+done < "$TMP/order.txt"
 
 pdfunite "${parts[@]}" "$OUT"
 echo "wrote $OUT"

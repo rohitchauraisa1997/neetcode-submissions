@@ -25,27 +25,34 @@ def git(*args):
 
 commit_index = {h: i for i, h in enumerate(git("rev-list", "--reverse", "HEAD").split())}
 
+def problem(path):
+    """Problem folder name: 'Data Structures & Algorithms/10 Graphs/2 Matrix BFS/matrixBFS/x.py'
+    and 'Data Structures & Algorithms/matrixBFS/submission-0.py' both give 'matrixBFS'."""
+    return os.path.basename(os.path.dirname(path))
+
+
 def pair_renames(added, deleted):
     """Pair renamed files by content: {new path: old path}.
 
     Adding a question to a short file makes it too different for git's rename
     detection, so match on content instead: the new file ends with the old file's
-    text. A file that was also edited falls back to the only deleted file left in
-    its folder.
+    text. Files are matched within the same problem folder name, so a file that
+    was also moved into a lesson folder in the same commit still pairs up. A file
+    that was also edited falls back to the only deleted file left for its problem.
     """
     pairs = {}
     deleted = dict(deleted)
     unmatched = []
     for new, new_text in added.items():
         match = next((old for old, text in deleted.items()
-                      if os.path.dirname(old) == os.path.dirname(new) and new_text.endswith(text)), None)
+                      if problem(old) == problem(new) and new_text.endswith(text)), None)
         if match:
             pairs[new] = match
             del deleted[match]
         else:
             unmatched.append(new)
     for new in unmatched:
-        same_dir = [old for old in deleted if os.path.dirname(old) == os.path.dirname(new)]
+        same_dir = [old for old in deleted if problem(old) == problem(new)]
         if len(same_dir) == 1:
             pairs[new] = same_dir[0]
             del deleted[same_dir[0]]
@@ -77,8 +84,8 @@ def renamed_in(commit, path):
     parents = git("rev-list", "--parents", "-n1", commit).split()[1:]
     if not parents:
         return None
-    folder = os.path.dirname(path)
-    status = git("show", "--no-renames", "--name-status", "--format=", "-z", commit, "--", folder).split("\0")
+    # whole commit, not just this folder: the old file may be in another folder
+    status = git("show", "--no-renames", "--name-status", "--format=", "-z", commit).split("\0")
     added, deleted = {}, {}
     for kind, p in zip(status[::2], status[1::2]):
         if p.endswith(".py") and kind == "A":

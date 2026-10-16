@@ -42,7 +42,7 @@ EOF
 # when run as `sh make_pdf.sh`.
 python3 -I scripts/pdf_order.py > "$TMP/order.txt"
 
-parts=()
+: > "$TMP/parts.tsv"
 n=0
 while IFS= read -r f; do
     n=$((n + 1))
@@ -67,14 +67,16 @@ while IFS= read -r f; do
         --header="$label||Page \$% of \$=" \
         -p "$part.ps" "$part.txt"
     ps2pdf "$part.ps" "$part.pdf"
-    parts+=("$part.pdf")
 
     png="${f%.py}.png"
     if [[ -f "$png" ]]; then
         image_page "$png" "$part-img.pdf"
-        parts+=("$part-img.pdf")
+        printf '%s\t%s\t%s\n' "$f" "$part.pdf" "$part-img.pdf" >> "$TMP/parts.tsv"
+    else
+        printf '%s\t%s\n' "$f" "$part.pdf" >> "$TMP/parts.tsv"
     fi
 done < "$TMP/order.txt"
 
-pdfunite "${parts[@]}" "$OUT"
+# Join everything behind a linked index page, with bookmarks.
+python3 -I scripts/pdf_index.py "$TMP/parts.tsv" "$OUT"
 echo "wrote $OUT"

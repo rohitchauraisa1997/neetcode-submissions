@@ -9,7 +9,7 @@
 ```
 Data Structures & Algorithms/   NeetCode solutions (the sync writes here)
 codility/                       Codility solutions
-scripts/                        organize.py, make_pdf.sh, pdf_order.py
+scripts/                        organize.py, make_pdf.sh, pdf_order.py, pdf_index.py
 pdf/                            solutions.pdf (generated, for printing)
 ```
 
@@ -40,6 +40,9 @@ After pulling new NeetCode submissions (the sync writes them to
 python3 scripts/organize.py   # move new problems (NeetCode + Codility) into their lesson
 sh scripts/make_pdf.sh        # rebuild pdf/solutions.pdf in course order
 ```
+
+The PDF opens with an index (NeetCode, then Codility): tap a problem to jump to it. The same
+tree is in the PDF's bookmarks, the table of contents in most PDF viewers.
 
 ---
 

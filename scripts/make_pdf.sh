@@ -8,6 +8,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."           # repo root, wherever this is run from
 
 OUT="${1:-pdf/solutions.pdf}"
+case "$OUT" in
+    *.pdf) ;;
+    *) echo "usage: make_pdf.sh [output.pdf]  (got: '$OUT')" >&2; exit 1 ;;
+esac
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 

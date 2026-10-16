@@ -1,3 +1,8 @@
+"""
+Max Area of Island (NeetCode) -- another approach (BFS)
+Problem statement: see max-area-of-island-dfs.py
+"""
+
 class Solution:
     def maxAreaOfIsland(self, grid: List[List[int]]) -> int:
         nRows, nCols = len(grid), len(grid[0])

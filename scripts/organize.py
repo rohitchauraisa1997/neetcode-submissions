@@ -137,9 +137,14 @@ def move(src, dst, dry):
     print(f"  {src}  ->  {dst}")
     if dry:
         return
+    # A folder added by hand (e.g. a new Codility task) isn't tracked yet, and
+    # `git add` refuses a path it has never seen: only stage the old path if
+    # git knew about it.
+    tracked = subprocess.run(["git", "ls-files", "--", src],
+                             capture_output=True, text=True, check=True).stdout.strip()
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     os.rename(src, dst)
-    git("add", "-A", "--", src, dst)
+    git("add", "-A", "--", *([src] if tracked else []), dst)
 
 
 def organize(root, location, task_name=lambda name: name, is_lesson=SECTION_DIR.match):

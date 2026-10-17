@@ -124,6 +124,43 @@ def fib_memo(n: int, memo=None) -> int:
     return memo[n]
     # Time: O(n), Space: O(n) cache + call stack
 
+def fib_dp_table(n: int) -> int:
+    # Bottom-up DP (tabulation), FULL table: the whole picture.
+    # dp[i] = F(i); fill left -> right, each from the two before it.
+    if n < 2:
+        return n
+    dp = [0] * (n + 1)          # n+1 slots so dp[n] exists
+    dp[1] = 1
+    for i in range(2, n + 1):
+        dp[i] = dp[i-1] + dp[i-2]
+    return dp[n]
+    # n = 5:  i   : 0  1  2  3  4  5
+    #         dp  : 0  1  1  2  3  5   -> dp[5] = 5
+    # Time: O(n), Space: O(n) for the table
+
+def fib_dp_two_slots(n: int) -> int:
+    # Same table, but only the last two cells are ever read, so keep just those:
+    # dp[0] = F(i-2), dp[1] = F(i-1)  (a sliding window of size 2 over the table)
+    if n < 2:
+        return n
+    dp = [0, 1]
+    i = 2
+    while i <= n:
+        tmp = dp[1]             # ⚠️ save F(i-1) before overwriting dp[1]
+        dp[1] = dp[0] + dp[1]   # new F(i)
+        dp[0] = tmp             # slide: old F(i-1) becomes the "two back" value
+        i += 1
+    return dp[1]
+    # n = 5:   i=2: [0,1] -> [1,1]
+    #          i=3: [1,1] -> [1,2]
+    #          i=4: [1,2] -> [2,3]
+    #          i=5: [2,3] -> [3,5]   -> dp[1] = 5
+    # fib_dp_two_slots(10) = 55
+    # Time: O(n), Space: O(1)
+
+# fib_iterative below is the same window again, with two variables (a, b)
+# instead of a 2-slot list, and the swap done in one line.
+
 def fib_iterative(n: int) -> int:
     # Bottom-up with a 2-value sliding window: a = F(i), b = F(i+1)
     a, b = 0, 1

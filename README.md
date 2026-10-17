@@ -33,6 +33,11 @@ cover use NeetCode 150 topics after it: 13 Sliding Window, 14 Prefix Sums, 15 Tw
 16 Greedy, 17 Math & Geometry. Add a new task as `codility/<task-name>/` and
 `scripts/organize.py` moves it into its section.
 
+Before a Codility test: `codility/cheatsheet.py` (templates, also `pdf/codility-cheatsheet.pdf`)
+and `codility/test-checklist.html` (problems to finish first; open it in a browser, ticks are
+kept in that browser). Live version with saved progress:
+[Codility Test Checklist](https://claude.ai/artifact/81N64VJGG3yqEwM7f5eDj2) (private).
+
 After pulling new NeetCode submissions (the sync writes them to
 `Data Structures & Algorithms/<problem>/`):
 

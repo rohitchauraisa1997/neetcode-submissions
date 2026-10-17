@@ -33,6 +33,8 @@ def page_count(pdf):
 
 def title(path):
     """NeetCode: the docstring title ('Max Consecutive Ones'). Codility / no title: the folder name."""
+    if path == "codility/cheatsheet.py":
+        return "Codility Cheatsheet (read before the test)"
     if os.path.basename(path) == "cheatsheet.py":
         return "Cheatsheet"
     folder = os.path.basename(os.path.dirname(path))
@@ -55,7 +57,9 @@ def build_tree(rows, first_page):
         site = parts[0]
         rest = parts[1:]                       # section/[lesson/]problem/file  or  section/cheatsheet.py
         section = rest[0]
-        if rest[-1] == "cheatsheet.py":
+        if rest == ["cheatsheet.py"]:          # site-wide cheatsheet (codility/cheatsheet.py)
+            section, lesson, key = "Cheatsheet", "", (site, "cheatsheet")
+        elif rest[-1] == "cheatsheet.py":
             lesson, key = "", (site, section, "cheatsheet")
         elif len(rest) == 4:
             lesson, key = rest[1], (site, section, rest[1], rest[2])

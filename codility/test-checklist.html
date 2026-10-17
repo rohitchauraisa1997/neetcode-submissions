@@ -1,0 +1,247 @@
+<title>Codility Test Checklist</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style id="page-style">
+/* Layout: one narrow column of tiered task rows, progress summary pinned above them. */
+:root {
+  --bg: #f3f5f4; --surface: #ffffff; --ink: #18211e; --muted: #5b6863;
+  --line: #d9e0dd; --accent: #1f6f5c; --accent-soft: #dcefe8; --done: #8a9893;
+  --warn: #9a5b12;
+  --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #111816; --surface: #18211e; --ink: #e6ece9; --muted: #98a6a0;
+  --line: #2a3632; --accent: #5cc4a6; --accent-soft: #1d3a32; --done: #6b7a74;
+  --warn: #e0a85a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #111816; --surface: #18211e; --ink: #e6ece9; --muted: #98a6a0;
+  --line: #2a3632; --accent: #5cc4a6; --accent-soft: #1d3a32; --done: #6b7a74;
+  --warn: #e0a85a; color-scheme: dark }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+#app { max-width: 46rem; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 28px; }
+
+header h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 4px; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); max-width: 60ch; }
+
+.summary { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 10px; }
+.summary .row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.big { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.meta { color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+.bar { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+.verdict { margin: 0; font-weight: 700; }
+.verdict.ready { color: var(--accent); }
+.save { font-size: .8rem; color: var(--muted); min-height: 1.2em; }
+.save.warn { color: var(--warn); }
+
+section h2 { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0 0 4px; }
+section > p { margin: 0 0 10px; color: var(--muted); font-size: .9rem; }
+ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+li { border-bottom: 1px solid var(--line); }
+label.task { display: grid; grid-template-columns: 1.6rem 1fr auto; gap: 4px 12px; align-items: start; padding: 12px 4px; cursor: pointer; }
+label.task input { width: 1.2rem; height: 1.2rem; margin: 3px 0 0; accent-color: var(--accent); cursor: pointer; }
+label.task input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.name { font-weight: 700; min-width: 0; }
+.name a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 3px; }
+.name a:hover { text-decoration-color: var(--accent); }
+.num { font-family: var(--font-mono); color: var(--muted); font-weight: 400; margin-right: 6px; font-variant-numeric: tabular-nums; }
+.time { font-family: var(--font-mono); font-size: .85rem; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.how { grid-column: 2 / 4; color: var(--muted); font-size: .9rem; min-width: 0; }
+.how code { font-family: var(--font-mono); font-size: .85em; background: var(--accent-soft); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
+.tag { display: inline-block; font-size: .75rem; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); margin-right: 6px; }
+li.is-done .name, li.is-done .how { color: var(--done); }
+li.is-done .name a { text-decoration: line-through; text-decoration-color: var(--done); }
+.cutoff { padding: 8px 4px; font-size: .85rem; color: var(--accent); font-weight: 700; border-bottom: 1px solid var(--line); }
+
+.tips { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.tips ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 6px; }
+.reset { justify-self: start; font: inherit; font-size: .85rem; color: var(--muted); background: none; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; cursor: pointer; }
+.reset:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.confirm { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: .85rem; }
+.confirm button { font: inherit; font-size: .85rem; border-radius: 6px; padding: 6px 10px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.confirm .yes { background: var(--warn); color: var(--surface); border-color: var(--warn); }
+@media (prefers-reduced-motion: reduce) { .bar > span { transition: none; } }
+</style>
+<main id="app"></main>
+<script type="application/json" id="state">{"done":{}}</script>
+<script>
+(function () {
+  // Kept so the page can republish itself with the same code (see save()).
+  const SELF = document.currentScript.textContent;
+  const STYLE = document.getElementById("page-style").textContent;
+  // The platform's own reset in <head>, reused as served so a republish keeps the same skeleton.
+  const headStyle = document.head && document.head.querySelector("style");
+  const RESET = headStyle ? headStyle.textContent
+    : ":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
+  const FONTS = document.querySelector('link[rel="stylesheet"]').outerHTML;
+  const TITLE = document.title;
+
+  const C = "https://app.codility.com/programmers/lessons/";
+  const TIERS = [
+    { id: "must", title: "Must do", blurb: "Every technique Codility asks most. Do these in order.", cutoff: 13, items: [
+      ["max-slice-sum", "MaxSliceSum", C + "9-maximum_slice_problem/max_slice_sum/", 20, "Kadane", "<code>cur = max(x, cur + x)</code>; start from <code>A[0]</code> so all-negative works"],
+      ["max-profit", "MaxProfit", C + "9-maximum_slice_problem/max_profit/", 15, "Kadane", "track the lowest price so far; <code>best = max(best, p - lowest)</code>; empty array → 0"],
+      ["climbing-stairs", "Climbing Stairs", "https://neetcode.io/problems/climbing-stairs", 10, "1-D DP", "already solved: redo the two-variable version from memory, <code>ways(i) = ways(i-1) + ways(i-2)</code>"],
+      ["house-robber", "House Robber", "https://neetcode.io/problems/house-robber", 20, "1-D DP", "two variables: <code>rob, skip = skip + x, max(rob, skip)</code>"],
+      ["number-solitaire", "NumberSolitaire", C + "17-dynamic_programming/number_solitaire/", 30, "1-D DP", "<code>dp[i] = A[i] + max(dp[i-6..i-1])</code>"],
+      ["brackets", "Brackets", C + "7-stacks_and_queues/brackets/", 15, "Stack", "pop must match; leftover openers → 0; empty string → 1"],
+      ["fish", "Fish", C + "7-stacks_and_queues/fish/", 30, "Stack", "stack of downstream fish; an upstream fish eats smaller ones off the top"],
+      ["stone-wall", "StoneWall", C + "7-stacks_and_queues/stone_wall/", 30, "Stack", "pop taller heights; push (new block) only if the top isn't equal"],
+      ["dominator", "Dominator", C + "8-leader/dominator/", 25, "Leader", "Boyer-Moore candidate + count, then VERIFY it's more than half; return an index"],
+      ["equi-leader", "EquiLeader", C + "8-leader/equi_leader/", 30, "Leader", "find the leader once, then count it on the left vs right at each split"],
+      ["max-product-of-three", "MaxProductOfThree", C + "6-sorting/max_product_of_three/", 15, "Sorting", "sort; <code>max(top 3, two smallest × largest)</code>"],
+      ["distinct", "Distinct", C + "6-sorting/distinct/", 5, "Sorting", "<code>len(set(A))</code>"],
+      ["triangle", "Triangle", C + "6-sorting/triangle/", 20, "Sorting", "sort; only neighbours need checking: <code>A[i] + A[i+1] > A[i+2]</code>"],
+      ["min-max-division", "MinMaxDivision", C + "14-binary_search_algorithm/min_max_division/", 40, "Binary search", "search the answer in <code>[max(A), sum(A)]</code>; count blocks needed for each guess"],
+      ["tie-ropes", "TieRopes", C + "16-greedy_algorithms/tie_ropes/", 15, "Greedy", "running sum; when it reaches K, count one and reset"],
+      ["max-nonoverlapping-segments", "MaxNonoverlappingSegments", C + "16-greedy_algorithms/max_nonoverlapping_segments/", 20, "Greedy", "segments come sorted by end; take one if it starts after the last end"]
+    ]},
+    { id: "warm", title: "Quick warm-ups", blurb: "Typical first tasks. Five to ten minutes each.", items: [
+      ["frog-jmp", "FrogJmp", C + "3-time_complexity/frog_jmp/", 5, "Math", "<code>(Y - X + D - 1) // D</code>, no loop"],
+      ["perm-check", "PermCheck", C + "4-counting_elements/perm_check/", 10, "Counting", "<code>set(A) == set(range(1, N + 1))</code>"],
+      ["odd-occurrences", "OddOccurrencesInArray", C + "2-arrays/odd_occurrences_in_array/", 5, "Bits", "XOR everything; pairs cancel out"],
+      ["count-div", "CountDiv", C + "5-prefix_sums/count_div/", 10, "Math", "<code>B // K - (A - 1) // K</code>, careful when A = 0"]
+    ]},
+    { id: "extra", title: "If you still have time", blurb: "Good practice, not needed to start the test.", items: [
+      ["max-double-slice-sum", "MaxDoubleSliceSum", C + "9-maximum_slice_problem/max_double_slice_sum/", 30, "Kadane", "best slice ending at each index from the left, and starting at each from the right"],
+      ["abs-distinct", "AbsDistinct", C + "15-caterpillar_method/abs_distinct/", 15, "Two pointers", "<code>len(set(abs(x) for x in A))</code>, or two pointers on the sorted array"],
+      ["min-abs-sum-of-two", "MinAbsSumOfTwo", C + "15-caterpillar_method/min_abs_sum_of_two/", 25, "Two pointers", "sort; move the pointer whose value has the larger absolute value"],
+      ["count-factors", "CountFactors", C + "10-prime_and_composite_numbers/count_factors/", 15, "Math", "loop i to √n; count 2 per divisor pair, 1 when i × i == n"],
+      ["disc-intersections", "NumberOfDiscIntersections", C + "6-sorting/number_of_disc_intersections/", 45, "Sorting", "hard: sort starts and ends; skip unless everything else is done"]
+    ]}
+  ];
+
+  let state = { done: {} };
+  try { state = Object.assign(state, JSON.parse(document.getElementById("state").textContent)); } catch (e) {}
+  let mode = "pending";                 // "artifact" | "local" | "readonly"
+  let artifact = null, saveTimer = null, confirming = false;
+
+  const LOCAL_KEY = "codility-checklist-done";
+  function loadLocal() { try { const v = JSON.parse(localStorage.getItem(LOCAL_KEY) || "null"); if (v) state.done = v; } catch (e) {} }
+  function saveLocal() { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(state.done)); } catch (e) {} }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
+  function mins(m) { return m >= 60 ? Math.floor(m / 60) + "h " + (m % 60 ? (m % 60) + "m" : "") : m + "m"; }
+
+  function render() {
+    const must = TIERS[0].items;
+    const mustDone = must.filter(t => state.done[t[0]]).length;
+    const coreDone = must.slice(0, TIERS[0].cutoff).every(t => state.done[t[0]]);
+    const left = must.filter(t => !state.done[t[0]]).reduce((s, t) => s + t[3], 0);
+    const allItems = TIERS.flatMap(t => t.items);
+    const allDone = allItems.filter(t => state.done[t[0]]).length;
+
+    let verdict = "Not ready yet. Start with MaxSliceSum.";
+    let cls = "";
+    if (mustDone === must.length) { verdict = "All must-do problems done. You're ready for the test."; cls = "ready"; }
+    else if (coreDone) { verdict = "Problems 1–" + TIERS[0].cutoff + " done: every core technique covered. Ready if you're short on time."; cls = "ready"; }
+    else if (mustDone > 0) { const next = must.find(t => !state.done[t[0]]); verdict = "Next up: " + next[1] + "."; }
+
+    const saveMsg = {
+      pending: "", artifact: "Progress is saved to this page.",
+      local: "Saving to the page isn't available here, so progress is kept on this device only.",
+      readonly: "This copy is read-only, so progress is kept on this device only."
+    }[mode];
+
+    let html = `
+      <header>
+        <h1>Codility Test Checklist</h1>
+        <p>145-minute test. Tick each problem once it scores 100% on both correctness and performance in Codility's report.</p>
+      </header>
+      <div class="summary" aria-live="polite">
+        <div class="row"><span class="big">${mustDone} / ${must.length}</span><span class="meta">must-do · ${left ? "about " + mins(left) + " left" : "nothing left"}</span></div>
+        <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="${must.length}" aria-valuenow="${mustDone}" aria-label="Must-do progress"><span style="width:${(mustDone / must.length * 100).toFixed(1)}%"></span></div>
+        <p class="verdict ${cls}">${esc(verdict)}</p>
+        <div class="meta">${allDone} of ${allItems.length} problems done in total</div>
+        <div class="save ${mode === "local" || mode === "readonly" ? "warn" : ""}" id="save">${esc(saveMsg)}</div>
+      </div>`;
+
+    let n = 0;
+    for (const tier of TIERS) {
+      html += `<section><h2>${esc(tier.title)}</h2><p>${esc(tier.blurb)}</p><ol>`;
+      tier.items.forEach((t, i) => {
+        const [id, name, url, m, tag, how] = t;
+        const done = !!state.done[id];
+        const num = tier.id === "must" ? `<span class="num">${String(++n).padStart(2, "0")}</span>` : "";
+        html += `<li class="${done ? "is-done" : ""}"><label class="task" for="t-${id}">
+          <input type="checkbox" id="t-${id}" data-id="${id}" ${done ? "checked" : ""}>
+          <span class="name">${num}<a href="${url}" target="_blank" rel="noopener">${esc(name)}</a></span>
+          <span class="time">${m}m</span>
+          <span class="how"><span class="tag">${esc(tag)}</span>${how}</span>
+        </label></li>`;
+        if (tier.cutoff && i + 1 === tier.cutoff) html += `<li class="cutoff">Short on time? Stopping here still covers every core technique.</li>`;
+      });
+      html += `</ol></section>`;
+    }
+
+    html += `<div class="tips"><h2 style="margin:0 0 8px;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)">For each problem</h2><ul>
+        <li>Run the example, then your own edge cases in the custom test box: empty, one element, all negative, largest N.</li>
+        <li>Below 100% on performance means you need a better algorithm, not a bug fix.</li>
+        <li>Stuck for twice the listed time? Check the cheatsheet template, then redo it from scratch without looking.</li>
+      </ul></div>`;
+    html += confirming
+      ? `<div class="confirm"><span>Untick every problem?</span><button class="yes" id="reset-yes">Untick all</button><button id="reset-no">Cancel</button></div>`
+      : `<button class="reset" id="reset">Untick all</button>`;
+
+    document.getElementById("app").innerHTML = html;
+  }
+
+  // Full document in the shape the Artifact tool publishes, with the new state embedded.
+  function documentHtml() {
+    const json = JSON.stringify(state).replace(/</g, "\\u003c");
+    return "<!doctype html><html><head><meta charset=utf8><meta name=viewport content=\"width=device-width,initial-scale=1,viewport-fit=cover\">" +
+      "<style>" + RESET + "</style></head><body>" +
+      "<title>" + esc(TITLE) + "</title>\n" + FONTS + "\n<style id=\"page-style\">" + STYLE + "</style>\n<main id=\"app\"></main>\n" +
+      "<script type=\"application/json\" id=\"state\">" + json + "<\/script>\n<script>" + SELF + "<\/script></body></html>";
+  }
+
+  function setSaveText(text, warn) {
+    const el = document.getElementById("save");
+    if (el) { el.textContent = text; el.classList.toggle("warn", !!warn); }
+  }
+
+  function scheduleSave() {
+    if (mode !== "artifact") { saveLocal(); return; }
+    setSaveText("Saving…");
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {          // batch quick ticks into one save
+      try {
+        await artifact.publish(documentHtml());    // every open view reloads to the saved page
+      } catch (e) {
+        const code = e && e.code;
+        if (code === "conflict") return;           // a newer version is loading
+        if (code === "not_writer" || code === "not_granted" || code === "not_declared" || code === "capability_disabled" || code === "consent_required") {
+          mode = "readonly"; saveLocal(); render(); return;
+        }
+        saveLocal();
+        setSaveText(code === "rate_limited" ? "Saving too often; your ticks are kept here and saved with the next one." : "Couldn't save just now; your ticks are kept on this device.", true);
+      }
+    }, 1800);
+  }
+
+  document.getElementById("app").addEventListener("change", e => {
+    const id = e.target.dataset && e.target.dataset.id;
+    if (!id) return;
+    if (e.target.checked) state.done[id] = true; else delete state.done[id];
+    render();
+    document.getElementById("t-" + id)?.focus();
+    scheduleSave();
+  });
+  document.getElementById("app").addEventListener("click", e => {
+    if (e.target.id === "reset") { confirming = true; render(); }
+    else if (e.target.id === "reset-no") { confirming = false; render(); }
+    else if (e.target.id === "reset-yes") { confirming = false; state.done = {}; render(); scheduleSave(); }
+  });
+
+  render();
+
+  const use = window.claude && window.claude.use;
+  (use ? window.claude.use("artifact") : Promise.resolve(null)).then(ns => {
+    artifact = ns;
+    if (artifact) { mode = "artifact"; }
+    else { mode = "local"; loadLocal(); }
+    render();
+  }).catch(() => { mode = "local"; loadLocal(); render(); });
+})();
+</script>

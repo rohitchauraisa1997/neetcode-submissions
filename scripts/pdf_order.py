@@ -153,6 +153,8 @@ for section in subdirs(NEETCODE):
     for lesson in sorted(lessons, key=lambda d: (lesson_rank.get(d, len(lesson_rank)), d)):
         print_problems(subdirs(lesson))
 
-# Codility: lesson folders are numbered as on the site, so they sort by name.
+# Codility: its cheatsheet first, then the section folders (numbered, so they sort by name).
+if os.path.exists(os.path.join(CODILITY, CHEATSHEET)):
+    print(os.path.join(CODILITY, CHEATSHEET))
 for lesson in subdirs(CODILITY):
     print_problems(subdirs(lesson))

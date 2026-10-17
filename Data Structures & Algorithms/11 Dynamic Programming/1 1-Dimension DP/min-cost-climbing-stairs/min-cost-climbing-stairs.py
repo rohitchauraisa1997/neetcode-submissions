@@ -1,3 +1,48 @@
+"""
+Min Cost Climbing Stairs (NeetCode)
+===================================
+
+You are given an array of integers cost where cost[i] is the cost of taking a
+step from the ith floor of a staircase. After paying the cost, you can step to
+either the (i + 1)th floor or the (i + 2)th floor.
+
+You may choose to start at the index 0 or the index 1 floor.
+
+Return the minimum cost to reach the top of the staircase, i.e. just past the
+last index in cost.
+
+Example 1:
+    Input:  cost = [1,2,3]
+    Output: 2
+    Explanation: Start at index 1, pay 2, jump 2 steps to the top. Total 2.
+
+Example 2:
+    Input:  cost = [1,2,1,2,1,1,1]
+    Output: 4
+    Explanation: Start at index 0, pay 1 at indices 0, 2, 4 and 6. Total 4.
+
+Constraints:
+    2 <= cost.length <= 100
+    0 <= cost[i] <= 100
+
+Two ways to fill the same DP (both below):
+
+    FROM THE START                         FROM THE END
+    dp[i] = cheapest to REACH step i       cost[i] = cheapest from step i to the TOP
+    dp[i] = min(dp[i-1] + cost[i-1],       cost[i] = cost[i] + min(cost[i+1],
+                dp[i-2] + cost[i-2])                               cost[i+2])
+    base: dp[0] = dp[1] = 0 (free start)   base: append 0 for the top
+    answer: dp[n] (the top)                answer: min(cost[0], cost[1])
+
+    Same question at every step: "which of the 2 neighbours is cheaper?"
+    Only the direction differs. Pick one and make the base cases match it.
+
+    Bugs I hit: [0]*n+1 is an error -> [0]*(n+1);
+                range(2, n) never fills dp[n] -> range(2, n+1)
+
+Codility's NumberSolitaire is the same shape: look back 6 squares, take the max.
+"""
+
 class Solution:
     def minCostClimbingStairs(self, cost: List[int]) -> int:
         # BOTTOM-UP DP, filled from the START

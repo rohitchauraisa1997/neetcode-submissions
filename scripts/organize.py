@@ -64,7 +64,7 @@ COURSE = [
                                     "max-area-of-island"]),
     ("10 Graphs", "Matrix BFS", ["matrixBFS", "shortest-path-in-binary-matrix", "rotting-fruit"]),
     ("10 Graphs", "Adjacency List", ["clone-graph", "course-schedule"]),
-    ("11 Dynamic Programming", "1-Dimension DP", ["house-robber"]),
+    ("11 Dynamic Programming", "1-Dimension DP", ["house-robber", "min-cost-climbing-stairs"]),
     ("11 Dynamic Programming", "2-Dimension DP", ["count-paths", "count-unique-paths-ii",
                                                      "longest-common-subsequence"]),
     ("12 Bit Manipulation", "Bit Operations", ["number-of-one-bits", "counting-bits", "reverse-bits"]),

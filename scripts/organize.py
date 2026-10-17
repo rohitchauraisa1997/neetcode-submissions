@@ -70,6 +70,7 @@ COURSE = [
     ("12 Bit Manipulation", "Bit Operations", ["number-of-one-bits", "counting-bits", "reverse-bits"]),
     # Not part of the beginners course (NeetCode 150 topics).
     ("13 Sliding Window", "", ["buy-and-sell-crypto", "longest-substring-without-duplicates"]),
+    ("16 Greedy", "", ["maximum-subarray"]),       # same numbers as the codility/ sections
 ]
 
 def lesson_dirs():

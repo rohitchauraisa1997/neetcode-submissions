@@ -50,7 +50,11 @@ label.task input:focus-visible { outline: 2px solid var(--accent); outline-offse
 .how { grid-column: 2 / 4; color: var(--muted); font-size: .9rem; min-width: 0; }
 .how code { font-family: var(--font-mono); font-size: .85em; background: var(--accent-soft); padding: 1px 4px; border-radius: 4px; overflow-wrap: anywhere; }
 .tag { display: inline-block; font-size: .75rem; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); margin-right: 6px; }
-li.is-done .name, li.is-done .how { color: var(--done); }
+.alt { grid-column: 2 / 4; font-size: .85rem; color: var(--muted); min-width: 0; }
+.alt a { color: var(--accent); text-underline-offset: 3px; }
+.alt-note { color: var(--muted); }
+.solved { display: inline-block; font-size: .7rem; padding: 0 6px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
+li.is-done .name, li.is-done .how, li.is-done .alt { color: var(--done); }
 li.is-done .name a { text-decoration: line-through; text-decoration-color: var(--done); }
 .cutoff { padding: 8px 4px; font-size: .85rem; color: var(--accent); font-weight: 700; border-bottom: 1px solid var(--line); }
 
@@ -64,7 +68,7 @@ li.is-done .name a { text-decoration: line-through; text-decoration-color: var(-
 @media (prefers-reduced-motion: reduce) { .bar > span { transition: none; } }
 </style>
 <main id="app"></main>
-<script type="application/json" id="state">{"done":{}}</script>
+<script type="application/json" id="state">{"done":{"max-slice-sum":true,"climbing-stairs":true,"house-robber":true}}</script>
 <script>
 (function () {
   // Kept so the page can republish itself with the same code (see save()).
@@ -112,6 +116,28 @@ li.is-done .name a { text-decoration: line-through; text-decoration-color: var(-
     ]}
   ];
 
+  // The same idea on another site: [title, url, site, solved already?, how it compares].
+  const N = "https://neetcode.io/problems/", L = "https://leetcode.com/problems/";
+  const ALT = {
+    "max-slice-sum": ["Maximum Subarray", N + "maximum-subarray", "NeetCode", true, "same problem"],
+    "max-profit": ["Best Time to Buy and Sell Stock", N + "buy-and-sell-crypto", "NeetCode", true, "same idea; Codility allows an empty array"],
+    "number-solitaire": ["Min Cost Climbing Stairs", N + "min-cost-climbing-stairs", "NeetCode", false, "same DP over the previous steps (2 instead of 6)"],
+    "brackets": ["Valid Parentheses", N + "validate-parentheses", "NeetCode", true, "same problem"],
+    "fish": ["Asteroid Collision", N + "asteroid-collision", "NeetCode", false, "same stack of things moving one way"],
+    "stone-wall": ["Daily Temperatures", N + "daily-temperatures", "NeetCode", false, "same monotonic stack"],
+    "dominator": ["Majority Element", N + "majority-element", "NeetCode", false, "same Boyer-Moore voting"],
+    "equi-leader": ["Minimum Index of a Valid Split", L + "minimum-index-of-a-valid-split/", "LeetCode", false, "same problem (not on NeetCode)"],
+    "max-product-of-three": ["Maximum Product of Three Numbers", L + "maximum-product-of-three-numbers/", "LeetCode", false, "same problem (not on NeetCode)"],
+    "distinct": ["Contains Duplicate", N + "duplicate-integer", "NeetCode", true, "same set idea"],
+    "triangle": ["Valid Triangle Number", L + "valid-triangle-number/", "LeetCode", false, "counts all triangles: harder (not on NeetCode)"],
+    "min-max-division": ["Split Array Largest Sum", N + "split-array-largest-sum", "NeetCode", false, "same problem"],
+    "max-nonoverlapping-segments": ["Non-overlapping Intervals", N + "non-overlapping-intervals", "NeetCode", false, "same greedy by end point"],
+    "perm-check": ["Missing Number", N + "missing-number", "NeetCode", false, "same counting/set idea"],
+    "odd-occurrences": ["Single Number", N + "single-number", "NeetCode", false, "same XOR trick"],
+    "min-abs-sum-of-two": ["Two Integer Sum II", N + "two-integer-sum-ii", "NeetCode", false, "same two pointers on a sorted array"],
+    "disc-intersections": ["Meeting Rooms II", N + "meeting-schedule-ii", "NeetCode", false, "same sort starts and ends"]
+  };
+
   let state = { done: {} };
   try { state = Object.assign(state, JSON.parse(document.getElementById("state").textContent)); } catch (e) {}
   let mode = "pending";                 // "artifact" | "local" | "readonly"
@@ -123,6 +149,15 @@ li.is-done .name a { text-decoration: line-through; text-decoration-color: var(-
 
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]); }
   function mins(m) { return m >= 60 ? Math.floor(m / 60) + "h " + (m % 60 ? (m % 60) + "m" : "") : m + "m"; }
+
+  function altLine(id) {
+    const a = ALT[id];
+    if (!a) return "";
+    const [title, url, site, solved, note] = a;
+    return `<span class="alt">Practice on ${esc(site)}: <a href="${url}" target="_blank" rel="noopener">${esc(title)}</a>` +
+      (solved ? ` <span class="solved">you solved this</span>` : "") +
+      ` <span class="alt-note">· ${esc(note)}</span></span>`;
+  }
 
   function render() {
     const must = TIERS[0].items;
@@ -169,6 +204,7 @@ li.is-done .name a { text-decoration: line-through; text-decoration-color: var(-
           <span class="name">${num}<a href="${url}" target="_blank" rel="noopener">${esc(name)}</a></span>
           <span class="time">${m}m</span>
           <span class="how"><span class="tag">${esc(tag)}</span>${how}</span>
+          ${altLine(id)}
         </label></li>`;
         if (tier.cutoff && i + 1 === tier.cutoff) html += `<li class="cutoff">Short on time? Stopping here still covers every core technique.</li>`;
       });
